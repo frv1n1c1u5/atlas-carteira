@@ -16,6 +16,19 @@ const tabs = [
   { key: "dados", label: "Dados" },
 ];
 
+function uniqueSorted(rows, key) {
+  return Array.from(new Set(rows.map((row) => row[key]).filter(Boolean))).sort((a, b) => String(a).localeCompare(String(b), "pt-BR"));
+}
+
+function filterRows(rows, filters) {
+  return rows.filter((row) => {
+    if (filters.institution && row.institution !== filters.institution) return false;
+    if (filters.rf_type && row.asset_class === "RF" && row.rf_type !== filters.rf_type) return false;
+    if (filters.rf_type && row.asset_class !== "RF") return false;
+    return true;
+  });
+}
+
 function money(value, digits = 0) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -113,7 +126,21 @@ function BarChart({ items, compact = false }) {
           const y = margin.top + (innerH - barH);
           return (
             <g key={item.label}>
-              <rect x={x} y={y} width={barW} height={barH} rx="16" fill={palette[idx % palette.length]} opacity="0.92" />
+              <rect
+                x={x}
+                y={y}
+                width={barW}
+                height={barH}
+                rx="16"
+                fill={
+                  item.eligible === true
+                    ? "#28d7a4"
+                    : item.eligible === false
+                      ? "#ffcc66"
+                      : palette[idx % palette.length]
+                }
+                opacity="0.92"
+              />
               <text x={x + barW / 2} y={height - 28} textAnchor="middle" fill="var(--muted)" fontSize="11">
                 {item.label.length > 14 ? `${item.label.slice(0, 14)}...` : item.label}
               </text>
@@ -185,6 +212,7 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const [filters, setFilters] = useState({ institution: "", rf_type: "" });
   const [manual, setManual] = useState({
     asset_class: "",
     rf_type: "",
@@ -201,7 +229,11 @@ function App() {
     cost_value: "",
   });
 
-  const data = useMemo(() => computePortfolio(rows), [rows]);
+  const baseData = useMemo(() => computePortfolio(rows), [rows]);
+  const visibleRows = useMemo(() => filterRows(rows, filters), [rows, filters]);
+  const data = useMemo(() => computePortfolio(visibleRows), [visibleRows]);
+  const institutions = useMemo(() => uniqueSorted(rows, "institution"), [rows]);
+  const rfTypes = useMemo(() => uniqueSorted(rows.filter((row) => row.asset_class === "RF"), "rf_type"), [rows]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem(themeKey) || "dark";
@@ -353,9 +385,26 @@ function App() {
       </section>
 
       <section className="grid-2">
-        <SectionCard title="Tipo de RF" subtitle="CDB, LCI, LCA, CRI, CRA, LF, DEB etc.">
+        <SectionCard title="Leitura FGC" subtitle="Protegidos vs sem cobertura">
+          <div className="fgc-split">
+            <div className="fgc-box good">
+              <span>Com FGC</span>
+              <strong>{money(data.rf_fgc.eligible_value)}</strong>
+              <small>{pct(data.rf_fgc.eligible_share * 100, 1)} da renda fixa</small>
+            </div>
+            <div className="fgc-box bad">
+              <span>Sem FGC</span>
+              <strong>{money(data.rf_fgc.non_eligible_value)}</strong>
+              <small>{pct((1 - data.rf_fgc.eligible_share) * 100, 1)} da renda fixa</small>
+            </div>
+          </div>
+        </SectionCard>
+        <SectionCard title="Tipos de RF" subtitle="Cores verdes para FGC e âmbar para sem FGC">
           <BarChart items={data.rf_types} compact />
         </SectionCard>
+      </section>
+
+      <section className="grid-2">
         <SectionCard title="Risco por emissor" subtitle="FGC x sem FGC">
           <div className="stack">
             {data.by_issuer.slice(0, 8).map((row) => (
@@ -622,6 +671,47 @@ function App() {
               </button>
             ))}
           </nav>
+
+          <section className="filters glass">
+            <div className="filter-group">
+              <label>Instituição</label>
+              <select value={filters.institution} onChange={(e) => setFilters((prev) => ({ ...prev, institution: e.target.value }))}>
+                <option value="">Todas</option>
+                {institutions.map((institution) => (
+                  <option key={institution} value={institution}>
+                    {institution}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Tipo RF</label>
+              <select value={filters.rf_type} onChange={(e) => setFilters((prev) => ({ ...prev, rf_type: e.target.value }))}>
+                <option value="">Todos</option>
+                {rfTypes.map((rfType) => (
+                  <option key={rfType} value={rfType}>
+                    {rfType}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-summary">
+              <span>Carteira original</span>
+              <strong>{money(baseData.summary.total)}</strong>
+            </div>
+            <div className="filter-summary accent">
+              <span>Exibição atual</span>
+              <strong>{money(data.summary.total)}</strong>
+            </div>
+            <div className="filter-actions">
+              <button type="button" className="btn ghost" onClick={() => setFilters({ institution: "", rf_type: "" })}>
+                Limpar filtros
+              </button>
+              <span className="muted">
+                {data.summary.holdings_count} de {baseData.summary.holdings_count} posições
+              </span>
+            </div>
+          </section>
 
           <div className="content-body">{currentView}</div>
         </main>

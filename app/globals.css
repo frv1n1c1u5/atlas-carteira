@@ -298,6 +298,67 @@ input {
   align-items: center;
 }
 
+.filters {
+  border-radius: 22px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) repeat(2, minmax(150px, 0.8fr)) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.filter-group {
+  display: grid;
+  gap: 8px;
+}
+
+.filter-group label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.filter-summary {
+  border-radius: 18px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+}
+
+.filter-summary span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.filter-summary strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.15rem;
+}
+
+.filter-summary.accent {
+  background: linear-gradient(135deg, rgba(40, 215, 164, 0.16), rgba(55, 162, 255, 0.12));
+}
+
+.filter-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
 .tab {
   border-color: transparent;
   background: transparent;
@@ -547,6 +608,49 @@ tbody tr:hover {
   white-space: nowrap;
 }
 
+.fgc-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.fgc-box {
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.fgc-box span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.fgc-box strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.6rem;
+}
+
+.fgc-box small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.fgc-box.good {
+  border-color: rgba(40, 215, 164, 0.28);
+  background: rgba(40, 215, 164, 0.08);
+}
+
+.fgc-box.bad {
+  border-color: rgba(255, 204, 102, 0.28);
+  background: rgba(255, 204, 102, 0.08);
+}
+
 @media (max-width: 1280px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -561,11 +665,16 @@ tbody tr:hover {
 @media (max-width: 1024px) {
   .kpis,
   .grid-2,
-  .hero {
+  .hero,
+  .filters {
     grid-template-columns: 1fr;
   }
 
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    justify-content: flex-start;
   }
 }
