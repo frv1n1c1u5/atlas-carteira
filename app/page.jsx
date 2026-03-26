@@ -125,11 +125,11 @@ function DonutChart({ items, centerLabel = "" }) {
   );
 }
 
-function BarChart({ items, compact = false }) {
+function BarChart({ items, compact = false, tall = false }) {
   if (!items?.length) return <div className="chart empty">Sem dados suficientes.</div>;
   const width = 820;
-  const height = compact ? 250 : 310;
-  const margin = { top: 18, right: 24, bottom: 54, left: 28 };
+  const height = tall ? 380 : compact ? 250 : 310;
+  const margin = { top: tall ? 22 : 18, right: 24, bottom: tall ? 68 : 54, left: 28 };
   const innerW = width - margin.left - margin.right;
   const innerH = height - margin.top - margin.bottom;
   const max = Math.max(...items.map((d) => d.value)) || 1;
@@ -160,10 +160,10 @@ function BarChart({ items, compact = false }) {
                 }
                 opacity="0.92"
               />
-              <text x={x + barW / 2} y={height - 28} textAnchor="middle" fill="var(--muted)" fontSize="11">
+              <text x={x + barW / 2} y={height - (tall ? 32 : 28)} textAnchor="middle" fill="var(--muted)" fontSize={tall ? 12 : 11}>
                 {item.label.length > 14 ? `${item.label.slice(0, 14)}...` : item.label}
               </text>
-              <text x={x + barW / 2} y={y - 8} textAnchor="middle" fill="var(--text)" fontSize="11" fontWeight="600">
+              <text x={x + barW / 2} y={y - 8} textAnchor="middle" fill="var(--text)" fontSize={tall ? 12 : 11} fontWeight="600">
                 {pct((item.value / total) * 100, 1)}
               </text>
             </g>
@@ -513,17 +513,8 @@ function App() {
       </section>
 
       <section className="grid-2">
-        <SectionCard title="Vencimentos futuros" subtitle="Fluxo esperado por prazo">
-          <BarChart items={data.maturity} compact />
-        </SectionCard>
-        <SectionCard title="Resumo para reunião" subtitle="Leitura executiva da carteira">
-          <div className="stack">
-            {data.insights.slice(0, 3).map((item) => (
-              <div className="insight" key={item}>
-                {item}
-              </div>
-            ))}
-          </div>
+        <SectionCard title="Vencimentos futuros" subtitle="Fluxo esperado por prazo" className="span-2">
+          <BarChart items={data.maturity} tall />
         </SectionCard>
       </section>
     </>

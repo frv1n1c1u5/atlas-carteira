@@ -414,6 +414,10 @@ input {
   gap: 18px;
 }
 
+.span-2 {
+  grid-column: 1 / -1;
+}
+
 .card {
   border-radius: 22px;
   padding: 20px;
@@ -434,6 +438,10 @@ input {
 
 .chart-short {
   min-height: 250px;
+}
+
+.span-2 .chart {
+  min-height: 380px;
 }
 
 .benchmark-grid {
