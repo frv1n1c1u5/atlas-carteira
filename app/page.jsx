@@ -224,23 +224,21 @@ function SparkCard({ label, value, hint }) {
   );
 }
 
-function BenchmarkTile({ label, source, month, year, accent }) {
+function BenchmarkTile({ label, source, month, year, accent, fallback = false }) {
   return (
     <article className="benchmark-tile">
+      <div className={`benchmark-pill ${accent}`}>{fallback ? "Base local" : accent === "good" ? "Atualizado" : "Mercado"}</div>
       <div className="benchmark-tile-head">
-        <div>
-          <span>{label}</span>
-          <strong>{source}</strong>
-        </div>
-        <div className={`benchmark-pill ${accent}`}>{accent === "good" ? "Atualizado" : "Mercado"}</div>
+        <span>{label}</span>
+        <small>{source}</small>
       </div>
       <div className="benchmark-values">
         <div>
-          <small>Último mês</small>
+          <small>1 mês</small>
           <strong className={month >= 0 ? "positive" : "negative"}>{month === null ? "—" : signedPct(month, 1)}</strong>
         </div>
         <div>
-          <small>Últimos 12 meses</small>
+          <small>12 meses</small>
           <strong className={year >= 0 ? "positive" : "negative"}>{year === null ? "—" : signedPct(year, 1)}</strong>
         </div>
       </div>
@@ -256,10 +254,11 @@ function benchmarkFallbackFromSeries(series) {
       if (values.length < 2) {
         return {
           label,
-          source: "Referência interna",
+          source: "Base local",
           month: null,
           year: null,
           accent: idx === 0 ? "good" : "neutral",
+          fallback: true,
         };
       }
       const latest = values[values.length - 1];
@@ -268,10 +267,11 @@ function benchmarkFallbackFromSeries(series) {
       const year = values[0] ? ((latest / values[0] - 1) * 100) : null;
       return {
         label,
-        source: "Referência interna",
+        source: "Base local",
         month,
         year,
         accent: idx === 0 ? "good" : "neutral",
+        fallback: true,
       };
     })
     .filter(Boolean);
@@ -482,12 +482,13 @@ function App() {
                   month={item.month}
                   year={item.year}
                   accent={item.label === "CDI" ? "good" : "neutral"}
+                  fallback={Boolean(item.source && String(item.source).includes("Base local"))}
                 />
               ))}
             </div>
           ) : null}
           {benchmarkNeedsFallback ? (
-            <p className="muted benchmark-note">Referência interna exibida enquanto a atualização diária não responde.</p>
+            <p className="muted benchmark-note">Exibindo base local enquanto a rotina diária sincroniza os dados.</p>
           ) : (
             <p className="muted benchmark-note">Atualização automática uma vez por dia para manter a experiência leve.</p>
           )}

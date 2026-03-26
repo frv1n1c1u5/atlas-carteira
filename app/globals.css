@@ -443,37 +443,42 @@ input {
 }
 
 .benchmark-tile {
+  position: relative;
   border-radius: 22px;
-  padding: 18px;
-  background: rgba(255, 255, 255, 0.04);
+  padding: 22px 18px 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 42%),
+    rgba(255, 255, 255, 0.04);
   border: 1px solid var(--line);
   min-height: 170px;
   display: grid;
-  gap: 16px;
+  gap: 18px;
+  overflow: hidden;
 }
 
 .benchmark-tile-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  gap: 4px;
+  padding-right: 74px;
 }
 
 .benchmark-tile-head span {
   display: block;
-  color: var(--muted);
-  font-size: 0.8rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  color: var(--text);
+  font-size: 0.98rem;
+  font-weight: 700;
 }
 
-.benchmark-tile-head strong {
+.benchmark-tile-head small {
   display: block;
-  margin-top: 6px;
-  font-size: 1.02rem;
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 
 .benchmark-pill {
+  position: absolute;
+  top: 16px;
+  right: 16px;
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 0.72rem;
@@ -509,8 +514,9 @@ input {
 
 .benchmark-values strong {
   display: block;
-  font-size: 1.4rem;
+  font-size: 1.55rem;
   line-height: 1.1;
+  letter-spacing: -0.03em;
 }
 
 .benchmark-values strong.positive {
@@ -531,6 +537,7 @@ input {
 
 .benchmark-note {
   margin: 12px 0 0;
+  font-size: 0.88rem;
 }
 
 .empty {
