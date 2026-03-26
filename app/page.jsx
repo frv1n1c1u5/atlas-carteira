@@ -8,7 +8,7 @@ const storageKey = "atlas-rows";
 const benchmarkKey = "atlas-benchmarks";
 const benchmarkDateKey = "atlas-benchmarks-day";
 
-const palette = ["#37a2ff", "#28d7a4", "#ffcc66", "#ff6b6b", "#9b8cff", "#44d7e2", "#f38fb6", "#8fd14f"];
+const palette = ["#87a6db", "#5dc1b0", "#d7b06a", "#cc7f77", "#a79ad8", "#7dbfca", "#d39bb6", "#a7bb7a"];
 const tabs = [
   { key: "overview", label: "Visão Geral" },
   { key: "rf", label: "Renda Fixa" },
