@@ -1,20 +1,22 @@
 :root {
   --bg: #07111f;
   --bg2: #0b1c31;
-  --panel: rgba(10, 20, 36, 0.72);
-  --panel-strong: rgba(9, 18, 31, 0.92);
+  --panel: rgba(10, 20, 36, 0.74);
+  --panel-strong: rgba(9, 18, 31, 0.94);
   --line: rgba(255, 255, 255, 0.08);
   --text: #eef4ff;
   --muted: #92a4bf;
   --accent: #28d7a4;
   --accent2: #37a2ff;
+  --warning: #ffcc66;
+  --danger: #ff6b6b;
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
 }
 
 [data-theme="light"] {
   --bg: #eef4fb;
   --bg2: #dfe9f6;
-  --panel: rgba(255, 255, 255, 0.72);
+  --panel: rgba(255, 255, 255, 0.76);
   --panel-strong: rgba(255, 255, 255, 0.94);
   --line: rgba(17, 24, 39, 0.08);
   --text: #102033;
@@ -47,13 +49,17 @@ input {
   font: inherit;
 }
 
+.page-shell {
+  position: relative;
+}
+
 .bg-orb {
   position: fixed;
   width: 34rem;
   height: 34rem;
   border-radius: 50%;
   filter: blur(40px);
-  opacity: 0.4;
+  opacity: 0.42;
   pointer-events: none;
   z-index: 0;
 }
@@ -77,6 +83,8 @@ input {
   grid-template-columns: 320px minmax(0, 1fr);
   gap: 20px;
   padding: 20px;
+  max-width: 1660px;
+  margin: 0 auto;
 }
 
 .glass {
@@ -147,7 +155,7 @@ input {
 .hero p {
   margin: 10px 0 0;
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .upload-box {
@@ -189,7 +197,8 @@ input {
 }
 
 .btn,
-.icon-btn {
+.icon-btn,
+.tab {
   appearance: none;
   border: 1px solid transparent;
   border-radius: 14px;
@@ -202,7 +211,8 @@ input {
 }
 
 .btn:hover,
-.icon-btn:hover {
+.icon-btn:hover,
+.tab:hover {
   transform: translateY(-1px);
 }
 
@@ -211,8 +221,14 @@ input {
   color: white;
 }
 
-.btn.ghost {
+.btn.ghost,
+.icon-btn {
   border-color: var(--line);
+}
+
+.content {
+  display: grid;
+  gap: 18px;
 }
 
 .hero {
@@ -221,7 +237,11 @@ input {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
   gap: 18px;
-  align-items: flex-flex-end;
+  align-items: flex-end;
+}
+
+.hero-copy {
+  max-width: 860px;
 }
 
 .eyebrow {
@@ -237,7 +257,7 @@ input {
 
 .hero h1 {
   margin: 12px 0 0;
-  font-size: clamp(2rem, 3vw, 3.3rem);
+  font-size: clamp(2rem, 3vw, 3.35rem);
   line-height: 1.02;
 }
 
@@ -269,9 +289,30 @@ input {
   background: linear-gradient(135deg, rgba(40, 215, 164, 0.18), rgba(55, 162, 255, 0.14));
 }
 
-.content {
+.tabs {
+  border-radius: 22px;
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.tab {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+}
+
+.tab.active {
+  color: var(--text);
+  background: rgba(55, 162, 255, 0.14);
+  border-color: rgba(55, 162, 255, 0.24);
+}
+
+.content-body {
   display: grid;
-  gap: 20px;
+  gap: 18px;
 }
 
 .kpis {
@@ -296,7 +337,8 @@ input {
 .kpi strong {
   display: block;
   margin-top: 10px;
-  font-size: 1.65rem;
+  font-size: 1.55rem;
+  line-height: 1.1;
 }
 
 .kpi .delta {
@@ -308,7 +350,7 @@ input {
 .grid-2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  gap: 18px;
 }
 
 .card {
@@ -321,12 +363,22 @@ input {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  align-items: flex-flex-end;
+  align-items: flex-end;
   margin-bottom: 14px;
 }
 
 .chart {
   min-height: 280px;
+}
+
+.chart-short {
+  min-height: 250px;
+}
+
+.empty {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
 }
 
 .stack {
@@ -369,7 +421,7 @@ input {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 860px;
+  min-width: 1180px;
 }
 
 th,
@@ -415,7 +467,7 @@ tbody tr:hover {
 }
 
 .drawer-card {
-  width: min(920px, 100%);
+  width: min(1040px, 100%);
   border-radius: 28px;
   padding: 22px;
 }
@@ -472,27 +524,30 @@ tbody tr:hover {
   vertical-align: middle;
 }
 
-.heatmap {
-  display: grid;
-  gap: 8px;
-}
-
-.heatmap-row {
-  display: grid;
-  grid-template-columns: 120px repeat(8, minmax(0, 1fr));
-  gap: 6px;
+.issuer-row,
+.ticker-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
   align-items: center;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
 }
 
-.heatmap-cell {
-  min-height: 26px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  font-size: 0.78rem;
+.issuer-row strong,
+.ticker-row strong {
+  display: block;
+  margin-bottom: 4px;
 }
 
-@media (max-width: 1200px) {
+.issuer-value {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 1280px) {
   .app-shell {
     grid-template-columns: 1fr;
   }
@@ -503,7 +558,7 @@ tbody tr:hover {
   }
 }
 
-@media (max-width: 920px) {
+@media (max-width: 1024px) {
   .kpis,
   .grid-2,
   .hero {

@@ -32,9 +32,10 @@ npm run build
 
 - Upload de planilha com normalização automática
 - Inserção e edição manual
-- Consolidação por classe, instituição, emissor, indexador e ticker
+- Consolidação por classe, tipo de RF, instituição, emissor, indexador e ticker
 - Alertas inteligentes, score e insights automáticos
-- Benchmark visual e matriz de correlação estimada
+- Benchmark visual e navegação por abas
+- Destaque explícito para ativos com e sem FGC
 
 ## Observação
 
