@@ -79,12 +79,60 @@ input {
 .app-shell {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
-  gap: 18px;
+  display: block;
   padding: 18px;
   max-width: 1660px;
   margin: 0 auto;
+}
+
+.topstack {
+  display: grid;
+  gap: 16px;
+}
+
+.topbar {
+  border-radius: 24px;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px 20px;
+  align-items: center;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.compact-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.compact-action.subtle {
+  box-shadow: none;
+}
+
+.compact-action input {
+  display: none;
+}
+
+.tabs-top {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
 }
 
 .glass {
@@ -94,24 +142,14 @@ input {
   box-shadow: var(--shadow);
 }
 
-.sidebar,
 .content {
   min-width: 0;
-}
-
-.sidebar {
-  position: sticky;
-  top: 20px;
-  align-self: start;
-  border-radius: 24px;
-  padding: 20px;
 }
 
 .brand {
   display: flex;
   gap: 14px;
   align-items: center;
-  margin-bottom: 18px;
 }
 
 .brand-mark {
@@ -137,54 +175,16 @@ input {
   font-size: 0.88rem;
 }
 
-.panel {
-  padding: 16px;
-  border-radius: 18px;
-  background: var(--panel-strong);
-  border: 1px solid var(--line);
-  margin-top: 14px;
-}
-
-.panel h3,
 .card h2 {
   margin: 0;
   font-size: 1rem;
 }
 
-.panel p,
 .hero p {
   margin: 10px 0 0;
   color: var(--muted);
   line-height: 1.55;
 }
-
-.upload-box {
-  display: grid;
-  gap: 8px;
-  margin-top: 14px;
-  padding: 18px;
-  border-radius: 18px;
-  border: 1px dashed rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.03);
-  cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.upload-box:hover {
-  transform: translateY(-1px);
-  border-color: rgba(108, 159, 255, 0.42);
-  background: rgba(108, 159, 255, 0.05);
-}
-
-.upload-box input {
-  display: none;
-}
-
-.upload-box span {
-  font-weight: 600;
-}
-
-.upload-box small,
 .muted {
   color: var(--muted);
 }
@@ -764,13 +764,12 @@ tbody tr:hover {
 }
 
 @media (max-width: 1280px) {
-  .app-shell {
+  .topbar {
     grid-template-columns: 1fr;
   }
 
-  .sidebar {
-    position: relative;
-    top: 0;
+  .topbar-actions {
+    justify-content: flex-start;
   }
 }
 
@@ -780,7 +779,8 @@ tbody tr:hover {
   .hero,
   .filters,
   .benchmark-grid,
-  .benchmark-values {
+  .benchmark-values,
+  .topbar {
     grid-template-columns: 1fr;
   }
 

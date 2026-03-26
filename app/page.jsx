@@ -280,7 +280,7 @@ function benchmarkFallbackFromSeries(series) {
 function App() {
   const [rows, setRows] = useState(DEMO_ROWS);
   const [editingId, setEditingId] = useState(null);
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
@@ -731,85 +731,54 @@ function App() {
       <div className="bg-orb orb-b" />
 
       <div className="app-shell">
-        <aside className="sidebar glass">
-          <div className="brand">
-            <div className="brand-mark">CP</div>
-            <div>
-              <strong>Consolidador de Portifólio</strong>
-              <span>Leitura executiva da carteira</span>
+        <div className="topstack">
+          <header className="topbar glass">
+            <div className="brand">
+              <div className="brand-mark">CP</div>
+              <div>
+                <strong>Consolidador de Portifólio</strong>
+                <span>Leitura executiva da carteira</span>
+              </div>
             </div>
-          </div>
 
-          {activeTab === "overview" ? (
-            <>
-              <div className="panel">
-                <h3>Importar dados</h3>
-                <p>Envie a planilha ou CSV para consolidar a carteira em poucos segundos.</p>
-                <label className="upload-box" htmlFor="fileInput">
-                  <input
-                    id="fileInput"
-                    type="file"
-                    accept=".xlsx,.xls,.xlsm,.csv,.txt"
-                    onChange={async (ev) => {
-                      const file = ev.target.files?.[0];
-                      if (!file) return;
-                      await handleUpload(file);
-                      ev.target.value = "";
-                    }}
-                  />
-                  <span>{busy ? "Processando..." : "Arraste ou clique para importar"}</span>
-                  <small>XLSX, CSV ou TXT</small>
-                </label>
-                <div className="row">
-                  <button className="btn ghost" type="button" onClick={() => setRows(DEMO_ROWS)}>
-                    Carregar demo
+            <div className="topbar-actions">
+              {activeTab === "overview" ? (
+                <>
+                  <label className="compact-action subtle">
+                    <input
+                      id="fileInput"
+                      type="file"
+                      accept=".xlsx,.xls,.xlsm,.csv,.txt"
+                      onChange={async (ev) => {
+                        const file = ev.target.files?.[0];
+                        if (!file) return;
+                        await handleUpload(file);
+                        ev.target.value = "";
+                      }}
+                    />
+                    <span>Importar</span>
+                  </label>
+                  <button className="compact-action subtle" type="button" onClick={() => setRows(DEMO_ROWS)}>
+                    Demo
                   </button>
-                  <button className="btn ghost" type="button" onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}>
-                    Tema
+                  <button className="compact-action subtle" type="button" onClick={() => openDrawer()}>
+                    Manual
                   </button>
-                </div>
-              </div>
-
-              <div className="panel">
-                <h3>Entrada manual</h3>
-                <p>Complemente dados faltantes ou faça ajustes sem sair da visão geral.</p>
-                <button className="btn primary" type="button" onClick={() => openDrawer()}>
-                  Abrir formulário
-                </button>
-              </div>
-            </>
-          ) : null}
-
-        </aside>
-
-        <main className="content">
-          <header className="hero glass">
-            <div className="hero-copy">
-              <span className="eyebrow">Visão patrimonial</span>
-              <h1>Carteira consolidada para leitura executiva</h1>
-              <p>
-                Visão única de patrimônio, concentração e benchmark para reunião em tela de computador.
-              </p>
-            </div>
-            <div className="hero-meta">
-              <div className="meta-card">
-                <span>Atualizado em</span>
-                <strong>{new Date(data.generated_at).toLocaleString("pt-BR")}</strong>
-              </div>
-              <div className="meta-card accent">
-                <span>Score da carteira</span>
-                <strong>{data.summary.score}/100</strong>
-              </div>
-            </div>
-          </header>
-
-          <nav className="tabs glass">
-            {tabs.map((tab) => (
-              <button key={tab.key} className={`tab ${activeTab === tab.key ? "active" : ""}`} type="button" onClick={() => setActiveTab(tab.key)}>
-                {tab.label}
+                </>
+              ) : null}
+              <button className="compact-action subtle" type="button" onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}>
+                Tema
               </button>
-            ))}
-          </nav>
+            </div>
+
+            <nav className="tabs tabs-top">
+              {tabs.map((tab) => (
+                <button key={tab.key} className={`tab ${activeTab === tab.key ? "active" : ""}`} type="button" onClick={() => setActiveTab(tab.key)}>
+                  {tab.label}
+                </button>
+              ))}
+            </nav>
+          </header>
 
           <section className="filters glass">
             <div className="filter-group">
@@ -852,8 +821,30 @@ function App() {
             </div>
           </section>
 
+          <main className="content">
+          <header className="hero glass">
+            <div className="hero-copy">
+              <span className="eyebrow">Visão patrimonial</span>
+              <h1>Carteira consolidada para leitura executiva</h1>
+              <p>
+                Visão única de patrimônio, concentração e benchmark para reunião em tela de computador.
+              </p>
+            </div>
+            <div className="hero-meta">
+              <div className="meta-card">
+                <span>Atualizado em</span>
+                <strong>{new Date(data.generated_at).toLocaleString("pt-BR")}</strong>
+              </div>
+              <div className="meta-card accent">
+                <span>Score da carteira</span>
+                <strong>{data.summary.score}/100</strong>
+              </div>
+            </div>
+          </header>
+
           <div className="content-body">{currentView}</div>
-        </main>
+          </main>
+        </div>
       </div>
 
       {drawerOpen && (
