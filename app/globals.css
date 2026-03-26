@@ -1,27 +1,27 @@
 :root {
-  --bg: #07111f;
-  --bg2: #0b1c31;
-  --panel: rgba(10, 20, 36, 0.74);
-  --panel-strong: rgba(9, 18, 31, 0.94);
-  --line: rgba(255, 255, 255, 0.08);
-  --text: #eef4ff;
-  --muted: #92a4bf;
-  --accent: #28d7a4;
-  --accent2: #37a2ff;
-  --warning: #ffcc66;
-  --danger: #ff6b6b;
-  --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  --bg: #071019;
+  --bg2: #0c1724;
+  --panel: rgba(12, 20, 31, 0.76);
+  --panel-strong: rgba(11, 17, 26, 0.94);
+  --line: rgba(255, 255, 255, 0.075);
+  --text: #eef3fb;
+  --muted: #93a2b8;
+  --accent: #46c7a1;
+  --accent2: #6c9fff;
+  --warning: #cfb36a;
+  --danger: #ff7070;
+  --shadow: 0 18px 56px rgba(0, 0, 0, 0.28);
 }
 
 [data-theme="light"] {
-  --bg: #eef4fb;
-  --bg2: #dfe9f6;
-  --panel: rgba(255, 255, 255, 0.76);
-  --panel-strong: rgba(255, 255, 255, 0.94);
+  --bg: #eef3f8;
+  --bg2: #dce6f0;
+  --panel: rgba(255, 255, 255, 0.82);
+  --panel-strong: rgba(255, 255, 255, 0.96);
   --line: rgba(17, 24, 39, 0.08);
   --text: #102033;
-  --muted: #59708c;
-  --shadow: 0 24px 60px rgba(34, 57, 85, 0.14);
+  --muted: #5d7088;
+  --shadow: 0 18px 46px rgba(34, 57, 85, 0.12);
 }
 
 * {
@@ -58,8 +58,8 @@ input {
   width: 34rem;
   height: 34rem;
   border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.42;
+  filter: blur(60px);
+  opacity: 0.18;
   pointer-events: none;
   z-index: 0;
 }
@@ -81,8 +81,8 @@ input {
   z-index: 1;
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
-  gap: 20px;
-  padding: 20px;
+  gap: 18px;
+  padding: 18px;
   max-width: 1660px;
   margin: 0 auto;
 }
@@ -103,7 +103,7 @@ input {
   position: sticky;
   top: 20px;
   align-self: start;
-  border-radius: 28px;
+  border-radius: 24px;
   padding: 20px;
 }
 
@@ -124,7 +124,7 @@ input {
   font-size: 1.35rem;
   color: white;
   background: linear-gradient(135deg, var(--accent2), var(--accent));
-  box-shadow: 0 12px 30px rgba(40, 215, 164, 0.25);
+  box-shadow: 0 12px 26px rgba(70, 199, 161, 0.18);
 }
 
 .brand strong {
@@ -139,7 +139,7 @@ input {
 
 .panel {
   padding: 16px;
-  border-radius: 22px;
+  border-radius: 18px;
   background: var(--panel-strong);
   border: 1px solid var(--line);
   margin-top: 14px;
@@ -172,8 +172,8 @@ input {
 
 .upload-box:hover {
   transform: translateY(-1px);
-  border-color: rgba(55, 162, 255, 0.5);
-  background: rgba(55, 162, 255, 0.08);
+  border-color: rgba(108, 159, 255, 0.42);
+  background: rgba(108, 159, 255, 0.05);
 }
 
 .upload-box input {
@@ -232,8 +232,8 @@ input {
 }
 
 .hero {
-  border-radius: 32px;
-  padding: 28px;
+  border-radius: 24px;
+  padding: 26px;
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
   gap: 18px;
@@ -251,8 +251,8 @@ input {
   font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: rgba(55, 162, 255, 0.12);
-  color: #8cc9ff;
+  background: rgba(108, 159, 255, 0.1);
+  color: #a7c6ff;
 }
 
 .hero h1 {
@@ -267,7 +267,7 @@ input {
 }
 
 .meta-card {
-  border-radius: 22px;
+  border-radius: 18px;
   padding: 18px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--line);
@@ -286,11 +286,11 @@ input {
 }
 
 .meta-card.accent {
-  background: linear-gradient(135deg, rgba(40, 215, 164, 0.18), rgba(55, 162, 255, 0.14));
+  background: linear-gradient(135deg, rgba(70, 199, 161, 0.14), rgba(108, 159, 255, 0.12));
 }
 
 .tabs {
-  border-radius: 22px;
+  border-radius: 18px;
   padding: 10px;
   display: flex;
   gap: 8px;
@@ -367,8 +367,8 @@ input {
 
 .tab.active {
   color: var(--text);
-  background: rgba(55, 162, 255, 0.14);
-  border-color: rgba(55, 162, 255, 0.24);
+  background: rgba(108, 159, 255, 0.13);
+  border-color: rgba(108, 159, 255, 0.22);
 }
 
 .content-body {
@@ -383,7 +383,7 @@ input {
 }
 
 .kpi {
-  border-radius: 24px;
+  border-radius: 20px;
   padding: 18px;
   background: var(--panel);
   border: 1px solid var(--line);
@@ -415,7 +415,7 @@ input {
 }
 
 .card {
-  border-radius: 28px;
+  border-radius: 22px;
   padding: 20px;
   min-width: 0;
 }
@@ -444,10 +444,10 @@ input {
 
 .benchmark-tile {
   position: relative;
-  border-radius: 22px;
+  border-radius: 18px;
   padding: 22px 18px 18px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 42%),
     rgba(255, 255, 255, 0.04);
   border: 1px solid var(--line);
   min-height: 170px;
@@ -489,12 +489,12 @@ input {
 }
 
 .benchmark-pill.good {
-  background: rgba(40, 215, 164, 0.14);
+  background: rgba(70, 199, 161, 0.14);
   color: #8ef0d3;
 }
 
 .benchmark-pill.neutral {
-  background: rgba(55, 162, 255, 0.14);
+  background: rgba(108, 159, 255, 0.14);
   color: #a7d4ff;
 }
 
@@ -553,7 +553,7 @@ input {
 
 .alert,
 .insight {
-  border-radius: 18px;
+  border-radius: 16px;
   padding: 14px 16px;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.04);
@@ -579,7 +579,7 @@ input {
 
 .table-wrap {
   overflow: auto;
-  border-radius: 18px;
+  border-radius: 16px;
   border: 1px solid var(--line);
 }
 
@@ -600,7 +600,7 @@ td {
 th {
   position: sticky;
   top: 0;
-  background: rgba(8, 16, 28, 0.95);
+  background: rgba(8, 15, 24, 0.95);
   color: var(--muted);
   font-size: 0.8rem;
   text-transform: uppercase;
@@ -633,7 +633,7 @@ tbody tr:hover {
 
 .drawer-card {
   width: min(1040px, 100%);
-  border-radius: 28px;
+  border-radius: 22px;
   padding: 22px;
 }
 
@@ -696,7 +696,7 @@ tbody tr:hover {
   gap: 12px;
   align-items: center;
   padding: 14px 16px;
-  border-radius: 16px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--line);
 }
@@ -719,7 +719,7 @@ tbody tr:hover {
 }
 
 .fgc-box {
-  border-radius: 18px;
+  border-radius: 16px;
   padding: 18px;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.04);
@@ -746,13 +746,13 @@ tbody tr:hover {
 }
 
 .fgc-box.good {
-  border-color: rgba(40, 215, 164, 0.28);
-  background: rgba(40, 215, 164, 0.08);
+  border-color: rgba(70, 199, 161, 0.24);
+  background: rgba(70, 199, 161, 0.07);
 }
 
 .fgc-box.bad {
-  border-color: rgba(255, 204, 102, 0.28);
-  background: rgba(255, 204, 102, 0.08);
+  border-color: rgba(207, 179, 106, 0.24);
+  background: rgba(207, 179, 106, 0.07);
 }
 
 @media (max-width: 1280px) {

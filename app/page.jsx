@@ -248,7 +248,7 @@ function BenchmarkTile({ label, source, month, year, accent, fallback = false })
 
 function benchmarkFallbackFromSeries(series) {
   if (!series?.length) return [];
-  return ["CDI", "IBOV", "IPCA"]
+  return ["Selic acumulada", "IBOV", "IPCA"]
     .map((label, idx) => {
       const values = series.map((row) => Number(row[label] || 0)).filter((value) => Number.isFinite(value));
       if (values.length < 2) {
@@ -445,10 +445,24 @@ function App() {
   const totalRf = data.holdings.filter((r) => r.asset_class === "RF").reduce((a, b) => a + Number(b.current_value || 0), 0);
   const totalRv = data.holdings.filter((r) => r.asset_class === "RV").reduce((a, b) => a + Number(b.current_value || 0), 0);
   const totalFunds = data.holdings.filter((r) => r.asset_class === "FUNDOS").reduce((a, b) => a + Number(b.current_value || 0), 0);
+  const fallbackBenchmarkItems = benchmarkFallbackFromSeries(data.benchmark.series);
   const benchmarkItems = benchmarks?.items
-    ? [benchmarks.items.CDI, benchmarks.items.IBOV, benchmarks.items.IPCA].filter(Boolean)
-    : benchmarkFallbackFromSeries(data.benchmark.series);
-  const benchmarkNeedsFallback = !benchmarks?.items;
+    ? ["SELIC", "IBOV", "IPCA"].map((key) => {
+        const fallbackLabel = key === "SELIC" ? "Selic acumulada" : key;
+        return (
+          benchmarks.items[key] ||
+          fallbackBenchmarkItems.find((item) => item.label === fallbackLabel) || {
+            label: fallbackLabel,
+            source: "Base local",
+            month: null,
+            year: null,
+            accent: key === "SELIC" ? "good" : "neutral",
+            fallback: true,
+          }
+        );
+      })
+    : fallbackBenchmarkItems;
+  const benchmarkNeedsFallback = !benchmarks?.items || benchmarkItems.some((item) => item?.fallback);
 
   const overviewLayout = (
     <>
@@ -460,16 +474,16 @@ function App() {
       </section>
 
       <section className="grid-2">
-        <SectionCard title="Alocação por classe" subtitle="Leitura rápida do patrimônio">
+        <SectionCard title="Alocação por classe" subtitle="Distribuição do patrimônio">
           <DonutChart items={data.by_class} centerLabel={money(data.summary.total)} />
         </SectionCard>
-        <SectionCard title="Exposição por emissor" subtitle="Concentração nominal">
+        <SectionCard title="Exposição por emissor" subtitle="Níveis de concentração">
           <BarChart items={data.by_issuer} />
         </SectionCard>
       </section>
 
       <section className="grid-2">
-        <SectionCard title="Benchmarks" subtitle="Comparativo diário com atualização automática">
+        <SectionCard title="Benchmarks" subtitle="Selic acumulada, IBOV e IPCA">
           {benchmarkStatus === "loading" ? (
             <div className="benchmark-empty">Carregando benchmarks do dia...</div>
           ) : benchmarkItems.length ? (
@@ -481,28 +495,28 @@ function App() {
                   source={item.source}
                   month={item.month}
                   year={item.year}
-                  accent={item.label === "CDI" ? "good" : "neutral"}
+                  accent={item.label === "Selic acumulada" ? "good" : "neutral"}
                   fallback={Boolean(item.source && String(item.source).includes("Base local"))}
                 />
               ))}
             </div>
           ) : null}
           {benchmarkNeedsFallback ? (
-            <p className="muted benchmark-note">Exibindo base local enquanto a rotina diária sincroniza os dados.</p>
+            <p className="muted benchmark-note">Quando a rotina diária não responde, a tela usa uma base local para manter a leitura disponível.</p>
           ) : (
             <p className="muted benchmark-note">Atualização automática uma vez por dia para manter a experiência leve.</p>
           )}
         </SectionCard>
-        <SectionCard title="Indexadores" subtitle="Distribuição da renda fixa">
+        <SectionCard title="Indexadores" subtitle="Perfil da renda fixa">
           <BarChart items={data.by_indexer} compact />
         </SectionCard>
       </section>
 
       <section className="grid-2">
-        <SectionCard title="Vencimentos futuros" subtitle="Fluxo da renda fixa por janela">
+        <SectionCard title="Vencimentos futuros" subtitle="Fluxo esperado por prazo">
           <BarChart items={data.maturity} compact />
         </SectionCard>
-        <SectionCard title="Narrativa do assessor" subtitle="Resumo comercial pronto para reunião">
+        <SectionCard title="Resumo para reunião" subtitle="Leitura executiva da carteira">
           <div className="stack">
             {data.insights.slice(0, 3).map((item) => (
               <div className="insight" key={item}>
@@ -525,7 +539,7 @@ function App() {
       </section>
 
       <section className="grid-2">
-        <SectionCard title="Leitura FGC" subtitle="Protegidos vs sem cobertura">
+        <SectionCard title="Proteção FGC" subtitle="Protegidos vs sem cobertura">
           <div className="fgc-split">
             <div className="fgc-box good">
               <span>Com FGC</span>
@@ -539,13 +553,13 @@ function App() {
             </div>
           </div>
         </SectionCard>
-        <SectionCard title="Tipos de RF" subtitle="Cores verdes para FGC e âmbar para sem FGC">
+        <SectionCard title="Tipos de RF" subtitle="Classificação dos papéis de renda fixa">
           <BarChart items={data.rf_types} compact />
         </SectionCard>
       </section>
 
       <section className="grid-2">
-        <SectionCard title="Risco por emissor" subtitle="FGC x sem FGC">
+        <SectionCard title="Risco por emissor" subtitle="Com e sem cobertura FGC">
           <div className="stack">
             {data.by_issuer.slice(0, 8).map((row) => (
               <div className="issuer-row" key={row.label}>
@@ -591,7 +605,7 @@ function App() {
       </section>
 
       <section className="grid-2">
-        <SectionCard title="Consolidação por ticker" subtitle="Unificação das posições de RV">
+        <SectionCard title="Consolidação por ticker" subtitle="Unificação das posições de renda variável">
           <BarChart items={data.by_ticker} />
         </SectionCard>
         <SectionCard title="Leitura executiva" subtitle="Concentração e dispersão">
@@ -646,7 +660,7 @@ function App() {
 
   const insightsLayout = (
     <section className="grid-2">
-      <SectionCard title="Alertas inteligentes" subtitle="O que merece atenção na reunião">
+      <SectionCard title="Alertas inteligentes" subtitle="Pontos de atenção da carteira">
         <div className="stack">
           {data.alerts.map((item, idx) => (
             <div className="alert" data-severity={item.severity} key={`${item.title}-${idx}`}>
@@ -656,7 +670,7 @@ function App() {
           ))}
         </div>
       </SectionCard>
-      <SectionCard title="Narrativa automática" subtitle="Texto para reunião com cliente">
+      <SectionCard title="Narrativa automática" subtitle="Texto pronto para reunião">
         <div className="stack">
           {data.insights.map((item) => (
             <div className="insight" key={item}>
@@ -731,7 +745,7 @@ function App() {
             <div className="brand-mark">CP</div>
             <div>
               <strong>Consolidador de Portifólio</strong>
-              <span>Visão comercial da carteira</span>
+              <span>Leitura executiva da carteira</span>
             </div>
           </div>
 
@@ -739,7 +753,7 @@ function App() {
             <>
               <div className="panel">
                 <h3>Importar dados</h3>
-                <p>Envie a planilha ou CSV e deixe o consolidado pronto em poucos segundos.</p>
+                <p>Envie a planilha ou CSV para consolidar a carteira em poucos segundos.</p>
                 <label className="upload-box" htmlFor="fileInput">
                   <input
                     id="fileInput"
@@ -767,7 +781,7 @@ function App() {
 
               <div className="panel">
                 <h3>Entrada manual</h3>
-                <p>Complemente dados faltantes ou faça ajustes rápidos sem sair da visão geral.</p>
+                <p>Complemente dados faltantes ou faça ajustes sem sair da visão geral.</p>
                 <button className="btn primary" type="button" onClick={() => openDrawer()}>
                   Abrir formulário
                 </button>
@@ -781,10 +795,9 @@ function App() {
           <header className="hero glass">
             <div className="hero-copy">
               <span className="eyebrow">Visão patrimonial</span>
-              <h1>Uma leitura clara da carteira para o cliente</h1>
+              <h1>Carteira consolidada para leitura executiva</h1>
               <p>
-                Um painel elegante para apresentar patrimônio, riscos e benchmark de forma simples, limpa e pronta para
-                reunião em tela de computador.
+                Visão única de patrimônio, concentração e benchmark para reunião em tela de computador.
               </p>
             </div>
             <div className="hero-meta">

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export const revalidate = 86400;
 
 const BCB_SERIES = {
-  CDI: 4189,
+  SELIC: 4189,
   IPCA: 4449,
 };
 
@@ -35,12 +35,6 @@ function compoundPercent(values) {
   return (factor - 1) * 100;
 }
 
-function compoundDailyAnnualized(values) {
-  if (!values?.length) return null;
-  const factor = values.reduce((acc, annualRate) => acc * Math.pow(1 + annualRate / 100, 1 / 252), 1);
-  return (factor - 1) * 100;
-}
-
 function monthlyWindow(series, months) {
   return series.slice(Math.max(0, series.length - months));
 }
@@ -50,17 +44,6 @@ function calcMonthlyMetrics(series) {
   const last = series[series.length - 1].value;
   const year = compoundPercent(monthlyWindow(series, 12).map((item) => item.value));
   return { month: last, year };
-}
-
-function calcDailyAnnualizedMetrics(series) {
-  if (!series.length) return { month: null, year: null };
-  const latest = series[series.length - 1];
-  const latestDate = new Date(`${latest.date}T00:00:00Z`);
-  const monthStart = asISODate(addMonths(latestDate, -1));
-  const yearStart = asISODate(addMonths(latestDate, -12));
-  const month = compoundDailyAnnualized(series.filter((item) => item.date > monthStart && item.date <= latest.date).map((item) => item.value));
-  const year = compoundDailyAnnualized(series.filter((item) => item.date > yearStart && item.date <= latest.date).map((item) => item.value));
-  return { month, year };
 }
 
 function addMonths(date, delta) {
@@ -122,8 +105,8 @@ async function fetchJson(url, init = {}) {
 }
 
 async function loadBenchmarks() {
-  const [cdiRaw, ipcaRaw, ibovRaw] = await Promise.all([
-    fetchJson(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${BCB_SERIES.CDI}/dados?formato=json`, {
+  const [selicResult, ipcaResult, ibovResult] = await Promise.allSettled([
+    fetchJson(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${BCB_SERIES.SELIC}/dados?formato=json`, {
       next: { revalidate: 86400 },
     }),
     fetchJson(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${BCB_SERIES.IPCA}/dados?formato=json`, {
@@ -134,23 +117,30 @@ async function loadBenchmarks() {
     }),
   ]);
 
-  const ibovResult = ibovRaw?.chart?.result?.[0];
   const items = {
-    CDI: {
-      label: "CDI",
-      source: "BCB / Selic a.a. (proxy)",
-      ...calcDailyAnnualizedMetrics(parseBCBSeries(cdiRaw)),
-    },
-    IPCA: {
-      label: "IPCA",
-      source: "IBGE / BCB 4449",
-      ...calcMonthlyMetrics(parseBCBSeries(ipcaRaw)),
-    },
-    IBOV: {
-      label: "IBOV",
-      source: "Yahoo Finance",
-      ...calcIbovMetrics(ibovResult),
-    },
+    SELIC: selicResult.status === "fulfilled"
+      ? {
+          label: "Selic acumulada",
+          source: "BCB / SGS 4189",
+          ...calcMonthlyMetrics(parseBCBSeries(selicResult.value)),
+        }
+      : null,
+    IPCA:
+      ipcaResult.status === "fulfilled"
+        ? {
+            label: "IPCA",
+            source: "BCB / SGS 4449",
+            ...calcMonthlyMetrics(parseBCBSeries(ipcaResult.value)),
+          }
+        : null,
+    IBOV:
+      ibovResult.status === "fulfilled"
+        ? {
+            label: "IBOV",
+            source: "Yahoo Finance",
+            ...calcIbovMetrics(ibovResult.value?.chart?.result?.[0]),
+          }
+        : null,
   };
 
   return {
