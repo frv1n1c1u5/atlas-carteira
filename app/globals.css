@@ -549,6 +549,42 @@ input {
   font-size: 0.88rem;
 }
 
+.indexer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.indexer-card {
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.8);
+  display: grid;
+  gap: 6px;
+}
+
+.indexer-card span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.indexer-card strong {
+  font-size: 1.65rem;
+  letter-spacing: -0.04em;
+}
+
+.indexer-card small {
+  color: var(--muted);
+}
+
+.indexer-card.accent {
+  border-color: rgba(58, 169, 156, 0.26);
+  background: linear-gradient(180deg, rgba(58, 169, 156, 0.12), rgba(255, 255, 255, 0.78));
+}
+
 .empty {
   display: grid;
   place-items: center;
@@ -775,12 +811,13 @@ tbody tr:hover {
 }
 
 @media (max-width: 1024px) {
-  .kpis,
+.kpis,
   .grid-2,
   .hero,
   .filters,
   .benchmark-grid,
   .benchmark-values,
+  .indexer-grid,
   .topbar {
     grid-template-columns: 1fr;
   }

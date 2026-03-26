@@ -544,8 +544,16 @@ function App() {
             </div>
           </div>
         </SectionCard>
-        <SectionCard title="Tipos de RF" subtitle="Classificação dos papéis de renda fixa">
-          <BarChart items={data.rf_types} compact />
+        <SectionCard title="Indexadores da RF" subtitle="CDI, IPCA e prefixado">
+          <div className="indexer-grid">
+            {data.by_indexer.map((item) => (
+              <div className={`indexer-card ${item.label === "Prefixado" ? "accent" : ""}`} key={item.label}>
+                <span>{item.label}</span>
+                <strong>{pct(item.share * 100, 1)}</strong>
+                <small>{money(item.value)}</small>
+              </div>
+            ))}
+          </div>
         </SectionCard>
       </section>
 
