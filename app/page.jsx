@@ -248,6 +248,35 @@ function BenchmarkTile({ label, source, month, year, accent }) {
   );
 }
 
+function benchmarkFallbackFromSeries(series) {
+  if (!series?.length) return [];
+  return ["CDI", "IBOV", "IPCA"]
+    .map((label, idx) => {
+      const values = series.map((row) => Number(row[label] || 0)).filter((value) => Number.isFinite(value));
+      if (values.length < 2) {
+        return {
+          label,
+          source: "Referência interna",
+          month: null,
+          year: null,
+          accent: idx === 0 ? "good" : "neutral",
+        };
+      }
+      const latest = values[values.length - 1];
+      const previous = values[values.length - 2];
+      const month = previous ? ((latest / previous - 1) * 100) : null;
+      const year = values[0] ? ((latest / values[0] - 1) * 100) : null;
+      return {
+        label,
+        source: "Referência interna",
+        month,
+        year,
+        accent: idx === 0 ? "good" : "neutral",
+      };
+    })
+    .filter(Boolean);
+}
+
 function App() {
   const [rows, setRows] = useState(DEMO_ROWS);
   const [editingId, setEditingId] = useState(null);
@@ -418,7 +447,8 @@ function App() {
   const totalFunds = data.holdings.filter((r) => r.asset_class === "FUNDOS").reduce((a, b) => a + Number(b.current_value || 0), 0);
   const benchmarkItems = benchmarks?.items
     ? [benchmarks.items.CDI, benchmarks.items.IBOV, benchmarks.items.IPCA].filter(Boolean)
-    : [];
+    : benchmarkFallbackFromSeries(data.benchmark.series);
+  const benchmarkNeedsFallback = !benchmarks?.items;
 
   const overviewLayout = (
     <>
@@ -455,12 +485,12 @@ function App() {
                 />
               ))}
             </div>
+          ) : null}
+          {benchmarkNeedsFallback ? (
+            <p className="muted benchmark-note">Referência interna exibida enquanto a atualização diária não responde.</p>
           ) : (
-            <div className="benchmark-empty">
-              Não foi possível atualizar os benchmarks hoje. A interface continua funcionando normalmente.
-            </div>
+            <p className="muted benchmark-note">Atualização automática uma vez por dia para manter a experiência leve.</p>
           )}
-          <p className="muted benchmark-note">Atualização automática uma vez por dia para manter a experiência leve.</p>
         </SectionCard>
         <SectionCard title="Indexadores" subtitle="Distribuição da renda fixa">
           <BarChart items={data.by_indexer} compact />
@@ -742,27 +772,8 @@ function App() {
                 </button>
               </div>
             </>
-          ) : (
-            <div className="panel">
-              <h3>{tabs.find((tab) => tab.key === activeTab)?.label}</h3>
-              <p>Leitura executiva da carteira com foco no que importa para a conversa com o cliente.</p>
-              <ul className="mini-list">
-                <li>Alocação por classe, instituição e emissor</li>
-                <li>Foco em risco, liquidez e concentração</li>
-                <li>Benchmarks e insights automáticos na visão geral</li>
-              </ul>
-            </div>
-          )}
+          ) : null}
 
-          <div className="panel">
-            <h3>Leitura rápida</h3>
-            <ul className="mini-list">
-              <li>FGC só para CDB, LCI e LCA</li>
-              <li>Debêntures, CRI, CRA e LF sem FGC</li>
-              <li>Layout otimizado para tela de desktop</li>
-              <li>Se os tipos RF ficarem vazios, reimporte a planilha original</li>
-            </ul>
-          </div>
         </aside>
 
         <main className="content">
