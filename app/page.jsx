@@ -588,6 +588,7 @@ function App() {
               <li>FGC só para CDB, LCI e LCA</li>
               <li>Debêntures, CRI, CRA e LF sem FGC</li>
               <li>Layout otimizado para tela de desktop</li>
+              <li>Se os tipos RF ficarem vazios, reimporte a planilha original</li>
             </ul>
           </div>
         </aside>
