@@ -257,7 +257,7 @@ input {
 
 .hero h1 {
   margin: 12px 0 0;
-  font-size: clamp(2rem, 3vw, 3.35rem);
+  font-size: clamp(2.15rem, 3.2vw, 3.7rem);
   line-height: 1.02;
 }
 
@@ -434,6 +434,103 @@ input {
 
 .chart-short {
   min-height: 250px;
+}
+
+.benchmark-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.benchmark-tile {
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  min-height: 170px;
+  display: grid;
+  gap: 16px;
+}
+
+.benchmark-tile-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.benchmark-tile-head span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.benchmark-tile-head strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.02rem;
+}
+
+.benchmark-pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+}
+
+.benchmark-pill.good {
+  background: rgba(40, 215, 164, 0.14);
+  color: #8ef0d3;
+}
+
+.benchmark-pill.neutral {
+  background: rgba(55, 162, 255, 0.14);
+  color: #a7d4ff;
+}
+
+.benchmark-values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.benchmark-values small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+}
+
+.benchmark-values strong {
+  display: block;
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+
+.benchmark-values strong.positive {
+  color: #8ef0d3;
+}
+
+.benchmark-values strong.negative {
+  color: #ff9d9d;
+}
+
+.benchmark-empty {
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px dashed var(--line);
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.benchmark-note {
+  margin: 12px 0 0;
 }
 
 .empty {
@@ -666,7 +763,9 @@ tbody tr:hover {
   .kpis,
   .grid-2,
   .hero,
-  .filters {
+  .filters,
+  .benchmark-grid,
+  .benchmark-values {
     grid-template-columns: 1fr;
   }
 

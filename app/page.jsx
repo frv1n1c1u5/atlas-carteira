@@ -5,6 +5,8 @@ import { DEMO_ROWS, computePortfolio, normalizeRow, parseUploadedFile } from "..
 
 const themeKey = "atlas-theme";
 const storageKey = "atlas-rows";
+const benchmarkKey = "atlas-benchmarks";
+const benchmarkDateKey = "atlas-benchmarks-day";
 
 const palette = ["#37a2ff", "#28d7a4", "#ffcc66", "#ff6b6b", "#9b8cff", "#44d7e2", "#f38fb6", "#8fd14f"];
 const tabs = [
@@ -39,6 +41,23 @@ function money(value, digits = 0) {
 
 function pct(value, digits = 1) {
   return `${(value || 0).toFixed(digits)}%`;
+}
+
+function signedPct(value, digits = 1) {
+  const n = Number(value || 0);
+  const sign = n > 0 ? "+" : "";
+  return `${sign}${n.toFixed(digits)}%`;
+}
+
+function sameDayKey() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Fortaleza",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const map = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${map.year}-${map.month}-${map.day}`;
 }
 
 function SectionCard({ title, subtitle, children, className = "" }) {
@@ -205,6 +224,30 @@ function SparkCard({ label, value, hint }) {
   );
 }
 
+function BenchmarkTile({ label, source, month, year, accent }) {
+  return (
+    <article className="benchmark-tile">
+      <div className="benchmark-tile-head">
+        <div>
+          <span>{label}</span>
+          <strong>{source}</strong>
+        </div>
+        <div className={`benchmark-pill ${accent}`}>{accent === "good" ? "Atualizado" : "Mercado"}</div>
+      </div>
+      <div className="benchmark-values">
+        <div>
+          <small>Último mês</small>
+          <strong className={month >= 0 ? "positive" : "negative"}>{month === null ? "—" : signedPct(month, 1)}</strong>
+        </div>
+        <div>
+          <small>Últimos 12 meses</small>
+          <strong className={year >= 0 ? "positive" : "negative"}>{year === null ? "—" : signedPct(year, 1)}</strong>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function App() {
   const [rows, setRows] = useState(DEMO_ROWS);
   const [editingId, setEditingId] = useState(null);
@@ -212,6 +255,8 @@ function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const [benchmarks, setBenchmarks] = useState(null);
+  const [benchmarkStatus, setBenchmarkStatus] = useState("loading");
   const [filters, setFilters] = useState({ institution: "", rf_type: "" });
   const [manual, setManual] = useState({
     asset_class: "",
@@ -257,6 +302,47 @@ function App() {
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(rows));
   }, [rows]);
+
+  useEffect(() => {
+    let alive = true;
+
+    async function loadBenchmarks() {
+      const today = sameDayKey();
+      try {
+        const cachedDate = localStorage.getItem(benchmarkDateKey);
+        const cached = localStorage.getItem(benchmarkKey);
+        if (cached && cachedDate === today) {
+          const parsed = JSON.parse(cached);
+          if (alive) {
+            setBenchmarks(parsed);
+            setBenchmarkStatus(parsed?.items ? "ready" : "error");
+          }
+          return;
+        }
+      } catch {
+        // Ignore local cache errors and fall through to the fetch.
+      }
+
+      try {
+        const res = await fetch("/api/benchmarks", { headers: { Accept: "application/json" } });
+        const payload = await res.json();
+        if (!alive) return;
+        setBenchmarks(payload);
+        setBenchmarkStatus(payload?.items ? "ready" : "error");
+        localStorage.setItem(benchmarkKey, JSON.stringify(payload));
+        localStorage.setItem(benchmarkDateKey, today);
+      } catch {
+        if (!alive) return;
+        setBenchmarkStatus("error");
+        setBenchmarks(null);
+      }
+    }
+
+    loadBenchmarks();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   function openDrawer(row = null) {
     setEditingId(row?.id || null);
@@ -330,6 +416,9 @@ function App() {
   const totalRf = data.holdings.filter((r) => r.asset_class === "RF").reduce((a, b) => a + Number(b.current_value || 0), 0);
   const totalRv = data.holdings.filter((r) => r.asset_class === "RV").reduce((a, b) => a + Number(b.current_value || 0), 0);
   const totalFunds = data.holdings.filter((r) => r.asset_class === "FUNDOS").reduce((a, b) => a + Number(b.current_value || 0), 0);
+  const benchmarkItems = benchmarks?.items
+    ? [benchmarks.items.CDI, benchmarks.items.IBOV, benchmarks.items.IPCA].filter(Boolean)
+    : [];
 
   const overviewLayout = (
     <>
@@ -350,8 +439,28 @@ function App() {
       </section>
 
       <section className="grid-2">
-        <SectionCard title="Benchmark" subtitle="CDI, IBOV e IPCA comparativos">
-          <LineChart series={data.benchmark.series} keys={["CDI", "IBOV", "IPCA", "Carteira"]} />
+        <SectionCard title="Benchmarks" subtitle="Comparativo diário com atualização automática">
+          {benchmarkStatus === "loading" ? (
+            <div className="benchmark-empty">Carregando benchmarks do dia...</div>
+          ) : benchmarkItems.length ? (
+            <div className="benchmark-grid">
+              {benchmarkItems.map((item) => (
+                <BenchmarkTile
+                  key={item.label}
+                  label={item.label}
+                  source={item.source}
+                  month={item.month}
+                  year={item.year}
+                  accent={item.label === "CDI" ? "good" : "neutral"}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="benchmark-empty">
+              Não foi possível atualizar os benchmarks hoje. A interface continua funcionando normalmente.
+            </div>
+          )}
+          <p className="muted benchmark-note">Atualização automática uma vez por dia para manter a experiência leve.</p>
         </SectionCard>
         <SectionCard title="Indexadores" subtitle="Distribuição da renda fixa">
           <BarChart items={data.by_indexer} compact />
@@ -595,41 +704,55 @@ function App() {
             </div>
           </div>
 
-          <div className="panel">
-            <h3>Importar dados</h3>
-            <p>Upload de Excel/CSV com normalização automática e consolidação imediata.</p>
-            <label className="upload-box" htmlFor="fileInput">
-              <input
-                id="fileInput"
-                type="file"
-                accept=".xlsx,.xls,.xlsm,.csv,.txt"
-                onChange={async (ev) => {
-                  const file = ev.target.files?.[0];
-                  if (!file) return;
-                  await handleUpload(file);
-                  ev.target.value = "";
-                }}
-              />
-              <span>{busy ? "Processando..." : "Arraste ou clique para importar"}</span>
-              <small>XLSX, CSV ou TXT</small>
-            </label>
-            <div className="row">
-              <button className="btn ghost" type="button" onClick={() => setRows(DEMO_ROWS)}>
-                Carregar demo
-              </button>
-              <button className="btn ghost" type="button" onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}>
-                Tema
-              </button>
-            </div>
-          </div>
+          {activeTab === "overview" ? (
+            <>
+              <div className="panel">
+                <h3>Importar dados</h3>
+                <p>Envie a planilha ou CSV e deixe o consolidado pronto em poucos segundos.</p>
+                <label className="upload-box" htmlFor="fileInput">
+                  <input
+                    id="fileInput"
+                    type="file"
+                    accept=".xlsx,.xls,.xlsm,.csv,.txt"
+                    onChange={async (ev) => {
+                      const file = ev.target.files?.[0];
+                      if (!file) return;
+                      await handleUpload(file);
+                      ev.target.value = "";
+                    }}
+                  />
+                  <span>{busy ? "Processando..." : "Arraste ou clique para importar"}</span>
+                  <small>XLSX, CSV ou TXT</small>
+                </label>
+                <div className="row">
+                  <button className="btn ghost" type="button" onClick={() => setRows(DEMO_ROWS)}>
+                    Carregar demo
+                  </button>
+                  <button className="btn ghost" type="button" onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}>
+                    Tema
+                  </button>
+                </div>
+              </div>
 
-          <div className="panel">
-            <h3>Entrada manual</h3>
-            <p>Use quando o arquivo estiver incompleto ou para ajuste fino do assessor.</p>
-            <button className="btn primary" type="button" onClick={() => openDrawer()}>
-              Abrir formulário
-            </button>
-          </div>
+              <div className="panel">
+                <h3>Entrada manual</h3>
+                <p>Complemente dados faltantes ou faça ajustes rápidos sem sair da visão geral.</p>
+                <button className="btn primary" type="button" onClick={() => openDrawer()}>
+                  Abrir formulário
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="panel">
+              <h3>{tabs.find((tab) => tab.key === activeTab)?.label}</h3>
+              <p>Leitura executiva da carteira com foco no que importa para a conversa com o cliente.</p>
+              <ul className="mini-list">
+                <li>Alocação por classe, instituição e emissor</li>
+                <li>Foco em risco, liquidez e concentração</li>
+                <li>Benchmarks e insights automáticos na visão geral</li>
+              </ul>
+            </div>
+          )}
 
           <div className="panel">
             <h3>Leitura rápida</h3>
@@ -645,11 +768,11 @@ function App() {
         <main className="content">
           <header className="hero glass">
             <div className="hero-copy">
-              <span className="eyebrow">Dashboard comercial</span>
-              <h1>Consolidação profissional para reuniões com clientes</h1>
+              <span className="eyebrow">Visão patrimonial</span>
+              <h1>Uma leitura clara da carteira para o cliente</h1>
               <p>
-                Uma camada visual acima do Excel para revelar risco, concentração, vencimentos e narrativa comercial,
-                com leitura clara em uma tela de computador padrão.
+                Um painel elegante para apresentar patrimônio, riscos e benchmark de forma simples, limpa e pronta para
+                reunião em tela de computador.
               </p>
             </div>
             <div className="hero-meta">
