@@ -588,9 +588,9 @@ function App() {
       <div className="app-shell">
         <aside className="sidebar glass">
           <div className="brand">
-            <div className="brand-mark">A</div>
+            <div className="brand-mark">CP</div>
             <div>
-              <strong>Atlas Carteira</strong>
+              <strong>Consolidador de Portifólio</strong>
               <span>Visão comercial da carteira</span>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Atlas Carteira",
+  title: "Consolidador de Portifólio",
   description: "Consolidação comercial de carteira de investimentos",
 };
 
