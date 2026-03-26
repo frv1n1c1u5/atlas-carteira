@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atlas Carteira | Consolidação para assessoria</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <div class="app-shell">
+      <aside class="sidebar glass">
+        <div class="brand">
+          <div class="brand-mark">A</div>
+          <div>
+            <strong>Atlas Carteira</strong>
+            <span>Visão comercial da carteira</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Importar dados</h3>
+          <p>Upload de Excel/CSV com normalizacao automatica e consolidacao imediata.</p>
+          <label class="upload-box" for="fileInput">
+            <input id="fileInput" type="file" accept=".xlsx,.xls,.xlsm,.csv,.txt" />
+            <span>Arraste ou clique para importar</span>
+            <small>XLSX, CSV ou TXT</small>
+          </label>
+          <div class="row">
+            <button id="resetDemo" class="btn ghost">Carregar demo</button>
+            <button id="themeToggle" class="btn ghost">Tema</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Entrada manual</h3>
+          <p>Use quando o arquivo estiver incompleto ou para ajuste fino do assessor.</p>
+          <button id="manualToggle" class="btn primary">Abrir formulário</button>
+        </div>
+
+        <div class="panel">
+          <h3>Leitura rápida</h3>
+          <ul class="mini-list">
+            <li>Alertas FGC, liquidez e vencimentos</li>
+            <li>Benchmark e correlação estimada</li>
+            <li>Score 0-100 e narrativa pronta</li>
+          </ul>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="hero glass">
+          <div>
+            <span class="eyebrow">Dashboard comercial</span>
+            <h1>Consolidação profissional para reuniões com clientes</h1>
+            <p>
+              Uma camada visual acima do Excel para revelar risco oculto, concentração, benchmarking e narrativa de
+              atendimento.
+            </p>
+          </div>
+          <div class="hero-meta">
+            <div class="meta-card">
+              <span>Atualizado em</span>
+              <strong id="generatedAt">-</strong>
+            </div>
+            <div class="meta-card accent">
+              <span>Score da carteira</span>
+              <strong id="scoreValue">-</strong>
+            </div>
+          </div>
+        </header>
+
+        <section class="kpis" id="kpis"></section>
+
+        <section class="grid-2">
+          <article class="card glass">
+            <div class="card-head">
+              <h2>Alocação por classe</h2>
+              <span class="muted">RF, RV, fundos e outros</span>
+            </div>
+            <div id="allocationChart" class="chart"></div>
+          </article>
+
+          <article class="card glass">
+            <div class="card-head">
+              <h2>Exposição por emissor</h2>
+              <span class="muted">Consolidação de risco</span>
+            </div>
+            <div id="issuerChart" class="chart"></div>
+          </article>
+        </section>
+
+        <section class="grid-2">
+          <article class="card glass">
+            <div class="card-head">
+              <h2>Vencimentos futuros</h2>
+              <span class="muted">Fluxo de RF por janela</span>
+            </div>
+            <div id="maturityChart" class="chart"></div>
+          </article>
+
+          <article class="card glass">
+            <div class="card-head">
+              <h2>Benchmark de referência</h2>
+              <span class="muted">Comparativo comercial</span>
+            </div>
+            <div id="benchmarkChart" class="chart"></div>
+          </article>
+        </section>
+
+        <section class="grid-2">
+          <article class="card glass">
+            <div class="card-head">
+              <h2>Indexadores</h2>
+              <span class="muted">CDI, IPCA e Pré</span>
+            </div>
+            <div id="indexerChart" class="chart"></div>
+          </article>
+
+          <article class="card glass">
+            <div class="card-head">
+              <h2>Correlação estimada</h2>
+              <span class="muted">Similaridade entre ativos</span>
+            </div>
+            <div id="correlationChart" class="chart"></div>
+          </article>
+        </section>
+
+        <section class="grid-2">
+          <article class="card glass">
+            <div class="card-head">
+              <h2>Alertas inteligentes</h2>
+              <span class="muted">FGC, liquidez, concentração</span>
+            </div>
+            <div id="alerts" class="stack"></div>
+          </article>
+
+          <article class="card glass">
+            <div class="card-head">
+              <h2>Insights automáticos</h2>
+              <span class="muted">Narrativa pronta para reunião</span>
+            </div>
+            <div id="insights" class="stack"></div>
+          </article>
+        </section>
+
+        <section class="card glass">
+          <div class="card-head">
+            <h2>Carteira consolidada</h2>
+            <span class="muted">Clique em uma linha para editar</span>
+          </div>
+          <div class="table-wrap">
+            <table id="holdingsTable">
+              <thead>
+                <tr>
+                  <th>Classe</th>
+                  <th>Instituição</th>
+                  <th>Emissor / Nome</th>
+                  <th>Indexador</th>
+                  <th>Vencimento</th>
+                  <th>Liquidez</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="drawer" class="drawer">
+      <div class="drawer-card glass">
+        <div class="card-head">
+          <h2>Entrada manual</h2>
+          <button id="closeDrawer" class="icon-btn">Fechar</button>
+        </div>
+        <form id="manualForm" class="form-grid">
+          <input name="asset_class" placeholder="Classe" />
+          <input name="institution" placeholder="Instituição" />
+          <input name="issuer" placeholder="Emissor" />
+          <input name="ticker" placeholder="Ticker" />
+          <input name="name" placeholder="Nome" />
+          <input name="indexer" placeholder="Indexador" />
+          <input name="rate" placeholder="Taxa" />
+          <input name="maturity" placeholder="Vencimento (AAAA-MM-DD)" />
+          <input name="current_value" placeholder="Valor atual" />
+          <input name="liquidity_days" placeholder="Liquidez (dias)" />
+          <input name="acquisition_date" placeholder="Aquisição (opcional)" />
+          <input name="cost_value" placeholder="Custo (opcional)" />
+          <div class="form-actions">
+            <button type="submit" class="btn primary">Salvar</button>
+            <button type="button" id="deleteRecord" class="btn ghost">Excluir</button>
+            <button type="button" id="clearForm" class="btn ghost">Limpar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
