@@ -811,22 +811,302 @@ tbody tr:hover {
 }
 
 @media (max-width: 1024px) {
-.kpis,
+  .kpis,
   .grid-2,
   .hero,
   .filters,
   .benchmark-grid,
   .benchmark-values,
   .indexer-grid,
-  .topbar {
-    grid-template-columns: 1fr;
-  }
-
+  .topbar,
+  .fgc-split,
   .form-grid {
     grid-template-columns: 1fr;
   }
 
   .filter-actions {
     justify-content: flex-start;
+  }
+
+  .drawer-card {
+    width: min(100%, 1040px);
+  }
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    padding: 12px;
+  }
+
+  .topbar {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .brand {
+    gap: 10px;
+  }
+
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    font-size: 1.1rem;
+  }
+
+  .brand strong {
+    font-size: 0.98rem;
+  }
+
+  .brand span {
+    font-size: 0.8rem;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .compact-action {
+    flex: 1 1 calc(50% - 4px);
+    padding: 10px 12px;
+    font-size: 0.84rem;
+  }
+
+  .tabs-top {
+    padding-top: 10px;
+  }
+
+  .tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: 2px 0 4px;
+    gap: 6px;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    font-size: 0.88rem;
+    white-space: nowrap;
+  }
+
+  .filters {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .filter-group label {
+    font-size: 0.72rem;
+  }
+
+  .filter-group select {
+    padding: 11px 12px;
+  }
+
+  .filter-summary strong {
+    font-size: 1rem;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn,
+  .icon-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero {
+    padding: 18px;
+    gap: 14px;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.75rem, 8vw, 2.25rem);
+  }
+
+  .meta-card {
+    padding: 14px;
+  }
+
+  .meta-card strong {
+    font-size: 1.2rem;
+  }
+
+  .content {
+    gap: 14px;
+  }
+
+  .content-body {
+    gap: 14px;
+  }
+
+  .kpi,
+  .card,
+  .benchmark-tile,
+  .indexer-card,
+  .fgc-box,
+  .alert,
+  .insight,
+  .issuer-row,
+  .ticker-row {
+    padding: 14px;
+  }
+
+  .kpi strong {
+    font-size: 1.3rem;
+  }
+
+  .card-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .chart {
+    min-height: 220px;
+  }
+
+  .chart-short {
+    min-height: 220px;
+  }
+
+  .span-2 .chart {
+    min-height: 280px;
+  }
+
+  .benchmark-grid {
+    gap: 10px;
+  }
+
+  .benchmark-tile {
+    min-height: auto;
+    gap: 14px;
+  }
+
+  .benchmark-pill {
+    position: static;
+    width: fit-content;
+    margin-bottom: 4px;
+  }
+
+  .benchmark-tile-head {
+    padding-right: 0;
+  }
+
+  .benchmark-values strong {
+    font-size: 1.28rem;
+  }
+
+  .benchmark-values small {
+    font-size: 0.74rem;
+  }
+
+  .indexer-card strong {
+    font-size: 1.3rem;
+  }
+
+  .indexer-card small {
+    font-size: 0.82rem;
+  }
+
+  .svg-legend {
+    gap: 10px;
+    font-size: 0.78rem;
+  }
+
+  .table-wrap {
+    border-radius: 14px;
+  }
+
+  table {
+    min-width: 960px;
+  }
+
+  th,
+  td {
+    padding: 11px 12px;
+    font-size: 0.86rem;
+  }
+
+  .drawer {
+    padding: 8px;
+    align-items: stretch;
+  }
+
+  .drawer-card {
+    width: 100%;
+    max-height: calc(100vh - 16px);
+    overflow: auto;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .form-grid {
+    gap: 10px;
+  }
+
+  .form-grid input {
+    padding: 12px 13px;
+  }
+
+  .bg-orb {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .compact-action {
+    flex-basis: 100%;
+  }
+
+  .hero {
+    padding: 16px;
+  }
+
+  .hero-meta {
+    gap: 10px;
+  }
+
+  .benchmark-values,
+  .kpis,
+  .grid-2,
+  .benchmark-grid,
+  .indexer-grid,
+  .fgc-split {
+    grid-template-columns: 1fr;
+  }
+
+  .issuer-row,
+  .ticker-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .issuer-value {
+    white-space: normal;
+  }
+
+  .btn,
+  .icon-btn {
+    width: 100%;
+  }
+
+  .form-actions {
+    width: 100%;
+  }
+
+  .form-actions .btn,
+  .form-actions .icon-btn {
+    flex: 1 1 100%;
   }
 }
