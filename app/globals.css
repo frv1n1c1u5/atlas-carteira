@@ -304,7 +304,7 @@ input {
   border-radius: 22px;
   padding: 14px;
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) repeat(2, minmax(150px, 0.8fr)) auto;
+  grid-template-columns: minmax(180px, 0.9fr) minmax(220px, 1fr) minmax(220px, 1fr) repeat(2, minmax(150px, 0.8fr)) auto;
   gap: 12px;
   align-items: end;
 }
@@ -918,6 +918,11 @@ tbody tr:hover {
     align-items: flex-start;
   }
 
+  .filter-actions .btn,
+  .filter-actions .icon-btn {
+    width: auto;
+  }
+
   .btn,
   .icon-btn {
     width: 100%;
@@ -1029,7 +1034,7 @@ tbody tr:hover {
   }
 
   table {
-    min-width: 960px;
+    min-width: 1080px;
   }
 
   th,

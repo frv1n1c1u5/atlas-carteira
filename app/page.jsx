@@ -24,6 +24,7 @@ function uniqueSorted(rows, key) {
 
 function filterRows(rows, filters) {
   return rows.filter((row) => {
+    if (filters.client && row.client_name !== filters.client) return false;
     if (filters.institution && row.institution !== filters.institution) return false;
     if (filters.rf_type && row.asset_class === "RF" && row.rf_type !== filters.rf_type) return false;
     if (filters.rf_type && row.asset_class !== "RF") return false;
@@ -286,7 +287,7 @@ function App() {
   const [activeTab, setActiveTab] = useState("overview");
   const [benchmarks, setBenchmarks] = useState(null);
   const [benchmarkStatus, setBenchmarkStatus] = useState("loading");
-  const [filters, setFilters] = useState({ institution: "", rf_type: "" });
+  const [filters, setFilters] = useState({ client: "", institution: "", rf_type: "" });
   const [manual, setManual] = useState({
     asset_class: "",
     rf_type: "",
@@ -307,6 +308,7 @@ function App() {
   const visibleRows = useMemo(() => filterRows(rows, filters), [rows, filters]);
   const data = useMemo(() => computePortfolio(visibleRows), [visibleRows]);
   const institutions = useMemo(() => uniqueSorted(rows, "institution"), [rows]);
+  const clients = useMemo(() => uniqueSorted(rows, "client_name"), [rows]);
   const rfTypes = useMemo(() => uniqueSorted(rows.filter((row) => row.asset_class === "RF"), "rf_type"), [rows]);
 
   useEffect(() => {
@@ -376,6 +378,7 @@ function App() {
   function openDrawer(row = null) {
     setEditingId(row?.id || null);
     setManual({
+      client_name: row?.client_name || "",
       asset_class: row?.asset_class || "",
       rf_type: row?.rf_type || "",
       institution: row?.institution || "",
@@ -693,6 +696,7 @@ function App() {
         <table id="holdingsTable">
           <thead>
             <tr>
+              <th>Cliente</th>
               <th>Classe</th>
               <th>Tipo RF</th>
               <th>FGC</th>
@@ -707,6 +711,7 @@ function App() {
           <tbody>
             {data.holdings.map((row) => (
               <tr key={row.id} onClick={() => openDrawer(row)}>
+                <td>{row.client_name || "-"}</td>
                 <td>{row.asset_class || "-"}</td>
                 <td>{row.asset_class === "RF" ? row.rf_type || "-" : "-"}</td>
                 <td>{row.asset_class === "RF" ? (row.fgc_eligible ? "Sim" : "Não") : "-"}</td>
@@ -790,6 +795,17 @@ function App() {
 
           <section className="filters glass">
             <div className="filter-group">
+              <label>Cliente</label>
+              <select value={filters.client} onChange={(e) => setFilters((prev) => ({ ...prev, client: e.target.value }))}>
+                <option value="">Todos</option>
+                {clients.map((client) => (
+                  <option key={client} value={client}>
+                    {client}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-group">
               <label>Instituição</label>
               <select value={filters.institution} onChange={(e) => setFilters((prev) => ({ ...prev, institution: e.target.value }))}>
                 <option value="">Todas</option>
@@ -820,7 +836,7 @@ function App() {
               <strong>{money(data.summary.total)}</strong>
             </div>
             <div className="filter-actions">
-              <button type="button" className="btn ghost" onClick={() => setFilters({ institution: "", rf_type: "" })}>
+              <button type="button" className="btn ghost" onClick={() => setFilters({ client: "", institution: "", rf_type: "" })}>
                 Limpar filtros
               </button>
               <span className="muted">
@@ -869,6 +885,7 @@ function App() {
             </div>
             <form className="form-grid" onSubmit={saveManual}>
               {[
+                ["client_name", "Cliente"],
                 ["asset_class", "Classe"],
                 ["rf_type", "Tipo RF"],
                 ["institution", "Instituição"],
