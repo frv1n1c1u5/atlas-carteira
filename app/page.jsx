@@ -448,6 +448,7 @@ function App() {
   const totalRf = data.holdings.filter((r) => r.asset_class === "RF").reduce((a, b) => a + Number(b.current_value || 0), 0);
   const totalRv = data.holdings.filter((r) => r.asset_class === "RV").reduce((a, b) => a + Number(b.current_value || 0), 0);
   const totalFunds = data.holdings.filter((r) => r.asset_class === "FUNDOS").reduce((a, b) => a + Number(b.current_value || 0), 0);
+  const showClientOverview = !filters.client;
   const fallbackBenchmarkItems = benchmarkFallbackFromSeries(data.benchmark.series);
   const benchmarkItems = benchmarks?.items
     ? ["SELIC", "IBOV", "IPCA"].map((key) => {
@@ -484,6 +485,14 @@ function App() {
           <BarChart items={data.by_issuer} />
         </SectionCard>
       </section>
+
+      {showClientOverview ? (
+        <section className="grid-2">
+          <SectionCard title="Patrimônio por cliente" subtitle="Distribuição entre os membros do grupo familiar" className="span-2">
+            <BarChart items={data.by_client} tall />
+          </SectionCard>
+        </section>
+      ) : null}
 
       <section className="grid-2">
         <SectionCard title="Benchmarks" subtitle="Selic acumulada, IBOV e IPCA">
